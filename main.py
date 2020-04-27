@@ -73,10 +73,12 @@ class MyClient(discord.Client):
             if the_command.split(" ")[0] == "remind":
                 the_command_args = the_command.split(" ")[1:]
                 try:
-                    if re.match(r"^{([0-9\*\-\+\(\)\/]+)}\s*([\s\S]+)", the_command_args):
-                        the_command_args[0] = eval(re.findall(r"^{([0-9\*\-\+\(\)\/]+)}\s*([\s\S]+)", " ".join(the_command_args))[0][0])
-                        the_command_args[1] = eval(re.findall(r"^{([0-9\*\-\+\(\)\/]+)}\s*([\s\S]+)", " ".join(the_command_args))[0][1])
-                        print(re.findall(r"^{([0-9\*\-\+\(\)\/]+)}\s*([\s\S]+)", " ".join(the_command_args))[0][1])
+                    if re.match(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", the_command_args):
+                        this_command_args = re.findall(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", the_command_args)
+                        the_command_args = [None, None]
+                        the_command_args[0] = eval(str(this_command_args[0][0]))
+                        print(the_command_args)
+                        the_command_args[1] = this_command_args[1]
                         
                     await message.channel.send(embed=embed_field("Safe Command", ["You just used the remind command!", "The remind time has been set to %s minutes"%str(float(the_command_args[0])), "After that time has passed you will be reminded the following:", the_command_args[1]]))
                     await asyncio.sleep(float(the_command_args[0])*60)
