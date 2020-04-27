@@ -71,23 +71,18 @@ class MyClient(discord.Client):
                 await message.channel.send(embed=embed_field("Safe Command", ["You just used the myname command!", "Name: {}\nId: {}".format(message.author, message.author.id)]))
 
             if the_command.split(" ")[0] == "remind":
-                the_command_args = the_command.split(" ")[1:]
-                try:
-                    if re.match(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", the_command_args):
-                        the_command_args = " ".join(the_command.split(" ")[1:])
-                        
-                        this_command_args = re.findall(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", the_command_args)
-                        the_command_args = [None, None]
-                        the_command_args[0] = eval(str(this_command_args[0][0]))
-                        print(the_command_args)
-                        the_command_args[1] = this_command_args[1]
-                        
-                    await message.channel.send(embed=embed_field("Safe Command", ["You just used the remind command!", "The remind time has been set to %s minutes"%str(float(the_command_args[0])), "After that time has passed you will be reminded the following:", the_command_args[1]]))
-                    await asyncio.sleep(float(the_command_args[0])*60)
-                    await message.channel.send(embed=embed_field("Reminder!", ["This was a reminder set %s minutes ago!"%str(float(the_command_args[0])), the_command_args[1]]))
-                except Exception as e:
-                  print(e)
-                  pass
+                these_command_args = " ".join(the_command.split(" ")[1:])
+                if re.match(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", these_command_args):
+                    the_command_args = " ".join(the_command.split(" ")[1:])
+                    
+                    this_command_args = re.findall(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", these_command_args)
+                    the_command_args = [None, None]
+                    the_command_args[0] = eval(str(this_command_args[0][0]))
+                    the_command_args[1] = this_command_args[0][1]
+                    
+                await message.channel.send(embed=embed_field("Safe Command", ["You just used the remind command!", "The remind time has been set to %s minutes"%str(float(the_command_args[0])), "After that time has passed you will be reminded the following:", the_command_args[1]]))
+                await asyncio.sleep(float(the_command_args[0])*60)
+                await message.channel.send(embed=embed_field("Reminder!", ["This was a reminder set %s minutes ago!"%str(float(the_command_args[0])), the_command_args[1]]))
                     #await message.channel.send(embed=command_error(error_type="Type", permission_needed="", bad_command="remind", the_message=message))
 
         elif re.match(r"^wd\s*(.*)", e_content):
