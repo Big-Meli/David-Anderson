@@ -14,7 +14,7 @@ Jess {
 }
 """
 
-import discord, time, random, asyncio, re
+import discord, time, random, asyncio, re, json, os
 
 def has_role(the_message, rolename):
     if discord.utils.get(the_message.guild.roles, name=rolename) in the_message.author.roles:
@@ -32,28 +32,6 @@ def embed_field(title, *fields):
 
     return embed
 
-def discord_user(message, wanted):
-    class this_user:
-        def __init__(this, name, inventory, money, friends, enemies, xp):
-            this.name = name
-            this.inventory = inventory
-            this.money = money
-            this.friends = friends
-            this.enemies = enemies
-            this.xp = xp
-
-    file = open("DiscordUsers", "r") #Please don't edit that file!
-    file_content = file.read().split("\n")
-    file.close()
-
-    if message.author not in [x.split("||")[0].split("=")[1] for x in file_content]:
-        file_content.append("Player={}||inventory={}||money={}||friends={}||enemies={}||xp={}".format(
-            message.author,
-            None, None, None, None, None
-        ))
-
-    discord_user = this_user()
-
 def get_options(option):
     pass
 
@@ -67,9 +45,20 @@ class MyClient(discord.Client):
 
     async def on_member_join(member):
         member.add_roles(get_role(member, 'Unidentified'))
+        with open("DiscordUsers.json", "r") as file:
+            discord_users = json.load(file)
+
+        await update_data(discord_user=member)
+
+        with open("DiscordUsers.json", "w") as file:
+            json.dump(discord_users, file, sort_keys=True, indent=4, separators=(',', ': '))
 
     async def on_message(self, message):
         e_content = message.content
+
+
+        await update_data(discord_user=message.author)
+        await update_experience(discord_user=message.author, exp=random.randint(1, 10), the_message=message)
 
         def command_error(error_type, permission_needed, bad_command, the_message):
             if error_type == "Permission":
@@ -81,7 +70,7 @@ class MyClient(discord.Client):
             the_command = re.findall(r"^d!\s*(.*)", e_content)[0]
 
             # I recommend putting all admin commands here
-            if the_command == "quit":
+            if the_command == "quitfm":
                 if has_role(the_message=message, rolename="Admin"):
                     await message.channel.send(embed=embed_field("Dangerous Command", ["You just used the quit command!", "This is a dangerous command, it will shut down the bot!\nShutting down..."]))
                     quit()
@@ -94,21 +83,69 @@ class MyClient(discord.Client):
             if the_command == "myname":
                 await message.channel.send(embed=embed_field("Safe Command", ["You just used the myname command!", "Name: {}\nId: {}".format(message.author, message.author.id)]))
 
-            if the_command.split(" ")[0] == "remind":
+            elif the_command.split(" ")[0] == "remind":
                 the_command_args = the_command.split(" ")[1:]
+
                 try:
                     await message.channel.send(embed=embed_field("Safe Command", ["You just used the remind command!", "The remind time has been set to %s minutes"%str(float(the_command_args[0])), "After that time has passed you will be reminded the following:", the_command_args[1]]))
                     await asyncio.sleep(float(the_command_args[0])*60)
                     await message.channel.send(embed=embed_field("Reminder!", ["This was a reminder set %s minutes ago!"%str(float(the_command_args[0])), the_command_args[1]]))
                 except:
                     await message.channel.send(embed=command_error(error_type="Type", permission_needed="", bad_command="remind", the_message=message))
+
+            elif the_command.split(" ")[0] == "stats":
+
+                with open("DiscordUsers.json", "r") as file:
+                    discord_users = json.load(file)
+
+                update_data(message.author.id)
+
+                the_command_args = the_command.split(" ")[1:]
+
+                try:
+                    if the_command_args[0] == "leaderboard":
+                        pass
+                except:
+                    await message.channel.send(embed=embed_field("Your Stats!", ["You used the stats command, here are yours!", "**Level**: {}\n**Experience**: {}\n**Id**: {}".format(discord_users[str(message.author.id)]["level"], discord_users[str(message.author.id)]["level"], str(message.author.id))]))
+
         elif re.match(r"^wd\s*(.*)", e_content):
             pass
 
         else:
             print("Received Message")
 
+async def update_data(discord_user):
+    with open("DiscordUsers.json", "r") as file:
+        discord_users = json.load(file)
 
+    print(discord_users[str(discord_user.id)]["exists"] == "true", discord_user.id, discord_users)
+
+    if not discord_users[str(discord_user.id)]["exists"] == "true":
+        discord_users[str(discord_user.id)] = {}
+        discord_users[str(discord_user.id)]["exists"] = "true"
+        discord_users[str(discord_user.id)]["experience"] = 0
+        discord_users[str(discord_user.id)]["level"] = 1
+
+    with open("DiscordUsers.json", "w") as file:
+        json.dump(discord_users, file, sort_keys=True, indent=4, separators=(',', ': '))
+
+async def update_experience(discord_user, exp, the_message):
+    with open("DiscordUsers.json", "r") as file:
+        discord_users = json.load(file)
+
+    experience = int(discord_users[str(discord_user.id)]["experience"]) + exp
+
+    starting_level = discord_users[str(discord_user.id)]["level"]
+    ending_level = int(experience ** (1/4))
+
+    if starting_level < ending_level:
+        await the_message.channel.send(":partying_face: You levelled up to level: %s!"%ending_level)
+        discord_users[str(discord_user.id)]["level"] = ending_level
+
+    discord_users[str(discord_user.id)]["experience"] = experience
+
+    with open("DiscordUsers.json", "w") as file:
+        json.dump(discord_users, file, sort_keys=True, indent=4, separators=(',', ': '))
 
 client = MyClient()
-client.run('Njg5OTM0Mzc4MTE3MjM0NzM5.XqbjWw.aYFxJ_nYOhWpKmYouaW5lr4IZrQ')
+client.run('NjkwNTAyMTgwOTQ3NjIzOTU2.XqbtOg.Qv0_rRxwQnfNWRrwtRtYSzTYJpQ')
