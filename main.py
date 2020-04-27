@@ -82,7 +82,8 @@ class MyClient(discord.Client):
                     await asyncio.sleep(float(the_command_args[0])*60)
                     await message.channel.send(embed=embed_field("Reminder!", ["This was a reminder set %s minutes ago!"%str(float(the_command_args[0])), the_command_args[1]]))
                 except:
-                    await message.channel.send(embed=command_error(error_type="Type", permission_needed="", bad_command="remind", the_message=message))
+                  pass
+                    #await message.channel.send(embed=command_error(error_type="Type", permission_needed="", bad_command="remind", the_message=message))
 
         elif re.match(r"^wd\s*(.*)", e_content):
             pass
