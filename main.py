@@ -16,6 +16,8 @@ Jess {
 
 import discord, time, random, asyncio, re, json, os
 
+os.system("ls")
+
 def has_role(the_message, rolename):
     if discord.utils.get(the_message.guild.roles, name=rolename) in the_message.author.roles:
         return True
