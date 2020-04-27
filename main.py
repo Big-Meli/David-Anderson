@@ -83,7 +83,8 @@ class MyClient(discord.Client):
                     await message.channel.send(embed=embed_field("Safe Command", ["You just used the remind command!", "The remind time has been set to %s minutes"%str(float(the_command_args[0])), "After that time has passed you will be reminded the following:", the_command_args[1]]))
                     await asyncio.sleep(float(the_command_args[0])*60)
                     await message.channel.send(embed=embed_field("Reminder!", ["This was a reminder set %s minutes ago!"%str(float(the_command_args[0])), the_command_args[1]]))
-                except:
+                except Exception as e:
+                  print(e)
                   pass
                     #await message.channel.send(embed=command_error(error_type="Type", permission_needed="", bad_command="remind", the_message=message))
 
