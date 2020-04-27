@@ -1,106 +1,114 @@
-import discord, time, random, asyncio
+"""
+Shaun {
+Notes to consider when programming:
+- Try making commands cross server friendly, if not then it can't be helped but you never know
+  when you might want the bot on another server
+- The server prefix is currentl 'd!' and it would be more hassle to have it as a var so use that for
+  commands that don't require developer knowledge
+}
+Stan {
 
-def has_role(message, rolename):
-  if discord.utils.get(message.guild.roles, name=rolename) in message.author.roles:
-    return True
-  else:
-    return False
+}
+Jess {
 
-def get_role(message, rolename):
-  return discord.utils.get(message.guild.roles , name=rolename)
+}
+"""
+
+import discord, time, random, asyncio, re
+
+def has_role(the_message, rolename):
+    if discord.utils.get(the_message.guild.roles, name=rolename) in the_message.author.roles:
+        return True
+    else:
+        return False
+
+def get_role(the_message, rolename):
+    return discord.utils.get(the_message.guild.roles , name=rolename).id
 
 def embed_field(title, *fields):
-  embed = discord.Embed(title=title, colour=discord.Colour(0x0000A0))
-  for i in fields:
-    embed.add_field(name=i[0], value=i[1])
-  
-  return embed
+    embed = discord.Embed(title=title, colour=discord.Colour(0x0000A0))
+    for i in fields:
+        embed.add_field(name=i[0], value=i[1])
 
+    return embed
 
-class discord_player:
-  def __init__(this, username, password, inventory, money, friends, enemies):
-    this.username = username
-    this.password = password
-    this.inventory = inventory
-    this.money = money
-    this.friends = friends
-    this.enemies = enemies
+def discord_user(message, wanted):
+    class this_user:
+        def __init__(this, name, inventory, money, friends, enemies, xp):
+            this.name = name
+            this.inventory = inventory
+            this.money = money
+            this.friends = friends
+            this.enemies = enemies
+            this.xp = xp
 
-  def load(this):
+    file = open("DiscordUsers", "r") #Please don't edit that file!
+    file_content = file.read().split("\n")
+    file.close()
+
+    if message.author not in [x.split("||")[0].split("=")[1] for x in file_content]:
+        file_content.append("Player={}||inventory={}||money={}||friends={}||enemies={}||xp={}".format(
+            message.author,
+            None, None, None, None, None
+        ))
+
+    discord_user = this_user()
+
+def get_options(option):
     pass
 
 class MyClient(discord.Client):
     async def on_ready(self):
-        print('Logged in as')
+        print('------')
         print(self.user.name)
         print(self.user.id)
+        print('good to go!')
         print('------')
 
     async def on_member_join(member):
-      member.add_roles(get_role(member, 'Unidentified'))
+        member.add_roles(get_role(member, 'Unidentified'))
 
     async def on_message(self, message):
+        e_content = message.content
 
-      if has_role(message, 'mute'):
-        await message.delete()
-      
-      else:
-        if message.author.id == self.user.id:
-            return
+        def command_error(error_type, permission_needed, bad_command, the_message):
+            if error_type == "Permission":
+                return embed_field("Bad Command", ["You just used the %s command!"%bad_command, "You are lacking the *minimum* permission of <@&%s>\nThis means that the command was not completed!"%get_role(the_message, permission_needed)])
+            elif error_type == "Useage":
+                return embed_field("Bad Command", ["You just used the %s command!"%bad_command, "You are using this command incorrectly, please check the useage by checking the bot docs or doing '?help <commandname>'"])
 
-        if message.content.startswith('!'):
+        if re.match(r"^d!\s*(.*)", e_content):
+            the_command = re.findall(r"^d!\s*(.*)", e_content)[0]
 
-          command = message.content.split(" ")[0][1:]
+            # I recommend putting all admin commands here
+            if the_command == "quit":
+                if has_role(the_message=message, rolename="Admin"):
+                    await message.channel.send(embed=embed_field("Dangerous Command", ["You just used the quit command!", "This is a dangerous command, it will shut down the bot!\nShutting down..."]))
+                    quit()
+                else:
+                    await message.channel.send(embed=command_error(error_type="Permission", permission_needed="Admin", bad_command="quit", the_message=message))
 
-          try:
-            commandsub1 = message.content.split(" ")[1]
-            commandargs = message.content.split(" ")[2]
-          except:
+            # I recommend putting all moderator commands here
+
+            # I recommend putting all global commands here
+            if the_command == "myname":
+                await message.channel.send(embed=embed_field("Safe Command", ["You just used the myname command!", "Name: {}\nId: {}".format(message.author, message.author.id)]))
+
+            if the_command.split(" ")[0] == "remind":
+                the_command_args = the_command.split(" ")[1:]
+                try:
+                    await message.channel.send(embed=embed_field("Safe Command", ["You just used the remind command!", "The remind time has been set to %s minutes"%str(float(the_command_args[0])), "After that time has passed you will be reminded the following:", the_command_args[1]]))
+                    await asyncio.sleep(float(the_command_args[0])*60)
+                    await message.channel.send(embed=embed_field("Reminder!", ["This was a reminder set %s minutes ago!"%str(float(the_command_args[0])), the_command_args[1]]))
+                except:
+                    await message.channel.send(embed=command_error(error_type="Type", permission_needed="", bad_command="remind", the_message=message))
+        elif re.match(r"^wd\s*(.*)", e_content):
             pass
 
-          commandless = message.content.replace(command, '').replace('! ', '')
-          
-          if has_role(message, 'Admin') or has_role(message, 'Senpai') or has_role(message, 'Teacher'): # Admin commands
-            if command == 'mute': # Mute command
-
-              if commandsub1 == "-t": # Time args
-                await message.mentions[0].add_roles(get_role(message, 'mute'))
-                await message.channel.send(embed=embed_field('', ['Someone was muted!','Person: {}\nTime: {} minutes'.format(message.mentions[0].mention,str(commandargs))]))
-
-                await asyncio.sleep(float(commandargs) * 60)
-
-                await message.mentions[0].remove_roles(get_role(message, 'mute'))
-              
-              else: # No time args
-
-                await message.mentions[0].add_roles(get_role(message, 'mute'))
-
-            elif command == 'unmute': # Unmute command
-
-              await message.mentions[0].remove_roles(get_role(message, 'mute'))
-
-            elif command == 'immitate':
-              
-              await message.channel.send(commandless)
-              await message.delete()
-
-          if has_role(message, 'Mod'):
-            pass
-
-          if command == 'commands':
-
-            embed = embed_field('Command List',  ['Admin: Mute', 'Syntax: !mute {@person}\nSyntax: !mute -t {minutes} {@person}'],['Admin: Unmute', 'Syntax: !unmute {@person}'],['Admin: Immitate', 'Syntax: !immitate {args}'],['U: Ratemypp', 'Syntax: !ratemypp'],['U: Commands', 'Syntax: !commands'],['U: Remindme [W.I.P]', 'Syntax: !remindme -t {minutes} {args}'],['U: Setip','Syntax: !setip {ip}'])
-            await message.channel.send(embed=embed)
+        else:
+            print("Received Message")
 
 
-
-          if command == 'ratemypp': # pp command
-            responses = """Pretty cool chief, Not very long so 3/10, You got a rocking dong bro, You call that a pp?, Hard as a rock like Nock, Even Stan has a bigger penis than that.. 3/4, Would smash ngl, Mine's bigger ;), Damn bro that's pretty good.. maybe we should team up :eggplant:""".split(', ')
-
-            await message.channel.send(responses[random.randint(0,len(responses)-1)])
-          
-          #Make notification command 
-          
 
 client = MyClient()
 client.run('Njg5OTM0Mzc4MTE3MjM0NzM5.XqbjWw.aYFxJ_nYOhWpKmYouaW5lr4IZrQ')
