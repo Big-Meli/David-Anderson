@@ -74,6 +74,8 @@ class MyClient(discord.Client):
                 the_command_args = the_command.split(" ")[1:]
                 try:
                     if re.match(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", the_command_args):
+                        the_command_args = " ".join(the_command.split(" ")[1:])
+                        
                         this_command_args = re.findall(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", the_command_args)
                         the_command_args = [None, None]
                         the_command_args[0] = eval(str(this_command_args[0][0]))
