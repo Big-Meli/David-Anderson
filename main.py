@@ -14,6 +14,8 @@ Jess {
 
 import discord, time, random, asyncio, re
 
+developers = ["685384266736992256"] # Add your DiscordID here if you want to be notified when it's up
+
 def has_role(the_message, rolename):
     if discord.utils.get(the_message.guild.roles, name=rolename) in the_message.author.roles:
         return True
@@ -35,11 +37,16 @@ def get_options(option):
 
 class MyClient(discord.Client):
     async def on_ready(self):
+        global developers
+
         print('------')
         print(self.user.name)
         print(self.user.id)
         print('good to go!')
         print('------')
+        
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Boku No Pico"))
+
 
     async def on_member_join(member):
         member.add_roles(get_role(member, 'Unidentified'))
@@ -65,8 +72,10 @@ class MyClient(discord.Client):
                     await message.channel.send(embed=command_error(error_type="Permission", permission_needed="Admin", bad_command="quit", the_message=message))
             elif the_command == "invite":
                 await message.channel.send(embed=embed_field("Extending an invitation!", ["You just used the invite command!", "Use this link: **https://discordapp.com/api/oauth2/authorize?client_id=689934378117234739&permissions=0&scope=bot** to invite David to **your** server!"]))
-            elif re.match(r"^[0-9]+", the_command):
-                embed = discord.Embed(title="Roll that dice!", value="The result of your **{}** sided dice is **{}**".format(re.findall(r"^[0-9]+", the_command)[0], str(random.randint(1, int(re.findall(r"^[0-9]+", the_command)))))colour=discord.Colour(0x0000A0))
+            elif re.match(r"^([1-9][0-9]*)", the_command):
+                embed = discord.Embed(title="Roll that dice!", colour=discord.Colour(0x0000A0))
+                value="The result of your **{}** sided dice roll is **{}**".format(re.findall(r"^[0-9]+", the_command)[0], str(random.randint(1, int(re.findall(r"^[0-9]+", the_command)[0]))))
+                embed.add_field(name="You just rolled a dice!", value=value)
                 await message.channel.send(embed=embed)
             # I recommend putting all moderator commands here
 
