@@ -14,6 +14,9 @@ Jess {
 
 import discord, time, random, asyncio, re
 
+class webdiplomacy:
+   hours_left = 24
+
 developers = ["685384266736992256"] # Add your DiscordID here if you want to be notified when it's up
 
 def has_role(the_message, rolename):
@@ -50,9 +53,27 @@ class MyClient(discord.Client):
         for i in client.guilds:
             for x in i.members:
                 total += 1
+                
+        self.bg_task = self.loop.create_task(self.web_diplomacy_reminder())
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over %i kiddie winks"%total))
 
+    async def web_diplomacy_reminder(self):
+        pass
+        """
+        global webdiplomacy
 
+        while not self.is_closed():
+            embed = discord.Embed(title="WebDiplomacy!", colour=discord.Colour(0x006400))
+            embed.add_field(name="This is an automated reminder", value="%s hours left of the current phase!"%str(webdiplomacy.hours_left))
+            self.get_channel(704784702296424518).send(embed=embed)
+            
+            webdiplomacy.hours_left -= 0.25
+            if webdiplomacy.hours_left <= 0:
+                webdiplomacy.hours_left = 24
+
+            await asyncio.sleep(15*60)
+          """
+            
     async def on_member_join(member):
         member.add_roles(get_role(member, 'Unidentified'))
 
@@ -104,11 +125,32 @@ class MyClient(discord.Client):
                     #await message.channel.send(embed=command_error(error_type="Type", permission_needed="", bad_command="remind", the_message=message))
 
         elif re.match(r"^wd\s*(.*)", e_content):
-            pass
+            """
+            global webdiplomacy
+            
+            if the_command.split(" ")[0] == "reset":
+                if has_role(the_message=message, rolename="Admin"):
+                    webdiplomacy.hours_left = 24
+                    embed = discord.Embed(title="WebDiplomacy Command!", colour=discord.Colour(0x006400))
+                    embed.add_field(name="You have reset the timer to 24 hours!", value="Please only use this command if you know what you are doing")
+                    message.channel.send(embed=embed)
+                    
+                    while not self.is_closed():
+                      
+                      embed = discord.Embed(title="WebDiplomacy!", colour=discord.Colour(0x006400))
+                      embed.add_field(name="This is an automated reminder", value="%s hours left of the current phase!"%str(webdiplomacy.hours_left))
+                      self.get_channel(704784702296424518).send(embed=embed)
+
+                      webdiplomacy.hours_left -= 0.25
+                      if webdiplomacy.hours_left <= 0:
+                          webdiplomacy.hours_left = 24
+
+                      await asyncio.sleep(15*60)
+                """
 
         else:
             print("Received Message")
-
+      
 
 
 client = MyClient()
