@@ -63,8 +63,10 @@ class MyClient(discord.Client):
                     quit()
                 else:
                     await message.channel.send(embed=command_error(error_type="Permission", permission_needed="Admin", bad_command="quit", the_message=message))
-            if the_command == "invite":
+            elif the_command == "invite":
                 await message.channel.send(embed=embed_field("Extending an invitation!", ["You just used the invite command!", "Use this link: **https://discordapp.com/api/oauth2/authorize?client_id=689934378117234739&permissions=0&scope=bot** to invite David to **your** server!"]))
+            elif re.match(r"^[0-9]+", the_command):
+                await message.channel.send(embed=embed_field("Roll that dice!", ["You just used the Dice Roll command!", "You just rolled a %s sided di!"%re.findall(r"^[1-9]+", the_command)[0][0], "The result is:", str(random.randint(1,int(re.findall(r"^[1-9]+", the_command)[0][0])))]))
             # I recommend putting all moderator commands here
 
             # I recommend putting all global commands here
