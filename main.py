@@ -45,8 +45,12 @@ class MyClient(discord.Client):
         print('good to go!')
         print('------')
         
-        name = "over {} kiddie winks".format(len([[x for x in y.members] for y in client.guilds]))
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=name))
+        #print([[x for x in y.members] for y in client.guilds]))
+        total = 0
+        for i in client.guilds:
+            for x in i.members:
+                total += 1
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over %i kiddie winks"%total))
 
 
     async def on_member_join(member):
