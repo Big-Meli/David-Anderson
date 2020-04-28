@@ -45,7 +45,7 @@ class MyClient(discord.Client):
         print('good to go!')
         print('------')
         
-        name = "over {} kiddie winks".format(len([y.get_all_members() for y in client.guilds]))
+        name = "over {} kiddie winks".format(len([y.members for y in client.guilds]))
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=name))
 
 
