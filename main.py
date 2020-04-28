@@ -66,7 +66,8 @@ class MyClient(discord.Client):
             elif the_command == "invite":
                 await message.channel.send(embed=embed_field("Extending an invitation!", ["You just used the invite command!", "Use this link: **https://discordapp.com/api/oauth2/authorize?client_id=689934378117234739&permissions=0&scope=bot** to invite David to **your** server!"]))
             elif re.match(r"^[0-9]+", the_command):
-                await message.channel.send(embed=embed_field("Roll that dice!", ["You just used the Dice Roll command!", "You just rolled a %s sided di!"%re.findall(r"^[1-9]+", the_command)[0][0], "The result is:", str(random.randint(1,int(re.findall(r"^[1-9]+", the_command)[0][0])))]))
+                embed = discord.Embed(title="Roll that dice!", value="The result of your **{}** sided dice is **{}**".format(re.findall(r"^[0-9]+", the_command)[0], str(random.randint(1, int(re.findall(r"^[0-9]+", the_command)))))colour=discord.Colour(0x0000A0))
+                await message.channel.send(embed=embed)
             # I recommend putting all moderator commands here
 
             # I recommend putting all global commands here
