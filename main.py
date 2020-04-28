@@ -45,7 +45,8 @@ class MyClient(discord.Client):
         print('good to go!')
         print('------')
         
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Boku No Pico"))
+        name = "over %s kiddie winks"%len(client.servers)
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=name))
 
 
     async def on_member_join(member):
