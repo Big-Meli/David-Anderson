@@ -45,7 +45,7 @@ class MyClient(discord.Client):
         print('good to go!')
         print('------')
         
-        name = "over %s kiddie winks"%len(client.servers)
+        name = "over {len([x.member_count for x in [y for y in client.servers]])} kiddie winks"
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=name))
 
 
