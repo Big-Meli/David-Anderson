@@ -55,16 +55,16 @@ class MyClient(discord.Client):
         global developers
 
         print('_______________')
-        print('Info Type:', console.utils.cyan("Runtime"))
+        print('Info Type: Runtime')
         print('_______________')
-        print("Running with name:", console.utils.cyan(self.user.name))
-        print("And therefore id:", console.utils.cyan(self.user.id))
-        print('And further by extension:', console.utils.cyan(os.environ['token']))
+        print("Running with name:", self.user.name)
+        print("And therefore id:", self.user.id)
+        print('And further by extension:', os.environ['token'])
         print('_______________')
-        print('Info Type:', console.utils.cyan("Status"))
+        print('Info Type: Status')
         print('_______________')
-        print('Ready:', console.utils.cyan("yes"))
-        print('Guilds:', ", ".join([console.utils.cyan(guild) for guild in client.guilds]))
+        print('Ready: yes')
+        print('Guilds:', ", ".join([guild for guild in client.guilds]))
         print('_______________')
         
         #print([[x for x in y.members] for y in client.guilds]))
