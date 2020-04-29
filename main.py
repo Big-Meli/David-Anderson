@@ -158,6 +158,6 @@ class MyClient(discord.Client):
             print("Received Message")
       
 
-
+print(os.environ['token'])
 client = MyClient()
 client.run(os.environ['token'])
