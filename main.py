@@ -55,7 +55,7 @@ class MyClient(discord.Client):
         global developers
 
         print('_______________')
-        print('Info Type:', console.utils.cyan("Runtime")
+        print('Info Type:', console.utils.cyan("Runtime"))
         print('_______________')
         print("Running with name:", console.utils.cyan(self.user.name))
         print("And therefore id:", console.utils.cyan(self.user.id))
