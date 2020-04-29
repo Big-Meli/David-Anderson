@@ -64,7 +64,7 @@ class MyClient(discord.Client):
         print('Info Type:', console.utils.cyan("Status"))
         print('_______________')
         print('Ready:', console.utils.cyan("yes"))
-        print('Guilds:', ", ".join([console.utils.cyan([guild for guild in client.guilds])))
+        print('Guilds:', ", ".join([console.utils.cyan(guild) for guild in client.guilds]))
         print('_______________')
         
         #print([[x for x in y.members] for y in client.guilds]))
