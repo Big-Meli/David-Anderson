@@ -61,7 +61,6 @@ class MyClient(discord.Client):
         pass
         """
         global webdiplomacy
-
         while not self.is_closed():
             embed = discord.Embed(title="WebDiplomacy!", colour=discord.Colour(0x006400))
             embed.add_field(name="This is an automated reminder", value="%s hours left of the current phase!"%str(webdiplomacy.hours_left))
@@ -70,7 +69,6 @@ class MyClient(discord.Client):
             webdiplomacy.hours_left -= 0.25
             if webdiplomacy.hours_left <= 0:
                 webdiplomacy.hours_left = 24
-
             await asyncio.sleep(15*60)
           """
             
@@ -110,23 +108,14 @@ class MyClient(discord.Client):
                 await message.channel.send(embed=embed_field("Safe Command", ["You just used the myname command!", "Name: {}\nId: {}".format(message.author, message.author.id)]))
 
             if the_command.split(" ")[0] == "remind":
-                thse_command_args = the_command.split(" ")
+                these_command_args = the_command.split(" ")
                 if these_command_args[1] == "period":
-                 await message.channel.send(embed=embed_field("Safe Command", ["You just used the remind command with a period modifier!", "The remind time has been set to %s minutes"%str(float(the_command_args[0])), "After that time has passed you will be reminded the following:", the_command_args[1]]))
+                    the_command_args = " ".join(the_command.split(" ")[2:])
 
-                    for i in range(int(these_command_args[2])):
-                        these_command_args = " ".join(the_command.split(" ")[2:])
-                        if re.match(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", these_command_args):
-                            the_command_args = " ".join(the_command.split(" ")[1:])
+                    await message.channel.send(embed=embed_field("Safe Command", ["You just used the remind command with a period modifier!", "The remind time has been set to %s minutes"%str(float(the_command_args[1])), "After that time has passed you will be reminded the following:", the_command_args[1]]))
 
-                            this_command_args = re.findall(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", these_command_args)
-                            the_command_args = [None, None]
-                            the_command_args[0] = eval(str(this_command_args[0][0]))
-                            the_command_args[1] = this_command_args[0][1]
-                        
-                        await asyncio.sleep(float(the_command_args[0])*60)
-                        await message.channel.send(embed=embed_field("Reminder!", ["This was a reminder set %s minutes ago!"%str(float(the_command_args[0])), the_command_args[1]]))
-                    
+                for i in range(int(these_command_args[2])):
+                    pass
                 else:
                     these_command_args = " ".join(the_command.split(" ")[1:])
                     if re.match(r"^{([0-9\*\-\+\(\)\/\.]+)}\s*([\s\S]+)", these_command_args):
@@ -142,29 +131,28 @@ class MyClient(discord.Client):
                     await message.channel.send(embed=embed_field("Reminder!", ["This was a reminder set %s minutes ago!"%str(float(the_command_args[0])), the_command_args[1]]))
                     #await message.channel.send(embed=command_error(error_type="Type", permission_needed="", bad_command="remind", the_message=message))
 
-        elif re.match(r"^wd\s*(.*)", e_content):
-            """
-            global webdiplomacy
-            
-            if the_command.split(" ")[0] == "reset":
-                if has_role(the_message=message, rolename="Admin"):
-                    webdiplomacy.hours_left = 24
-                    embed = discord.Embed(title="WebDiplomacy Command!", colour=discord.Colour(0x006400))
-                    embed.add_field(name="You have reset the timer to 24 hours!", value="Please only use this command if you know what you are doing")
-                    message.channel.send(embed=embed)
-                    
-                    while not self.is_closed():
-                      
-                      embed = discord.Embed(title="WebDiplomacy!", colour=discord.Colour(0x006400))
-                      embed.add_field(name="This is an automated reminder", value="%s hours left of the current phase!"%str(webdiplomacy.hours_left))
-                      self.get_channel(704784702296424518).send(embed=embed)
+        elif re.match(r"^wd!\s*(.*)", e_content):
+            the_command = re.findall(r"^wd!\s*(.*)", e_content)[0]
+            print(the_command.split(" "))
+            if the_command.split(" ")[0] == "remind":
+                try:
+                    the_command_args = the_command.split(" ")
+                    print("{} : {} : {}".format(the_command_args[2], the_command_args[1], " ".join(the_command_args[3:])))
+                    embed = discord.Embed(title="Remind me diplomacy style!", colour=discord.Colour(0x4b5320))
+                    embed.add_field(name="You've set a reminder to go off every **{}** minutes, **{}** times!".format(str(float(the_command_args[2])), the_command_args[1]), value=" ".join(the_command_args[3:]))
+                    await message.channel.send(embed=embed)
 
-                      webdiplomacy.hours_left -= 0.25
-                      if webdiplomacy.hours_left <= 0:
-                          webdiplomacy.hours_left = 24
+                    for i in range(int(the_command_args[1])):
+                        embed = discord.Embed(title="Remind me diplomacy style!", colour=discord.Colour(0x4b5320))
+                        embed.add_field(name="This is a webdiplomacy reminder set by: **{}**".format(message.author), value=" ".join(the_command_args[3:]))
+                        await message.channel.send(embed=embed)
+                        await asyncio.sleep(float(the_command_args[2])*60)
+                except Exception as e:
+                    embed = discord.Embed(title="Remind me diplomacy style!", colour=discord.Colour(0x4b5320))
+                    embed.add_field(name="Something went wrong! This is the correct syntax", value="wd!remind (<int>|times) (<float>|interval(minutes)) (<**string>|tobereminded)")
+                    await message.channel.send(embed=embed)
+                    print(e)
 
-                      await asyncio.sleep(15*60)
-                """
 
         else:
             print("Received Message")
