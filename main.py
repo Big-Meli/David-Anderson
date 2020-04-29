@@ -12,7 +12,13 @@ Jess {
 }
 """
 
-import discord, time, random, asyncio, re, os, from termcolor import colored
+import discord
+import time
+import random
+import asyncio
+import re 
+import os
+from termcolor import colored
 
 class webdiplomacy:
    hours_left = 24
