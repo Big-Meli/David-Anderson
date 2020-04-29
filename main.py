@@ -17,6 +17,12 @@ import discord, time, random, asyncio, re, os, from termcolor import colored
 class webdiplomacy:
    hours_left = 24
 
+    
+class console:
+    class utils:
+        def cyan(text):
+          return colored(text, "cyan")
+
 developers = ["685384266736992256"] # Add your DiscordID here if you want to be notified when it's up
 
 def has_role(the_message, rolename):
@@ -37,27 +43,22 @@ def embed_field(title, *fields):
 
 def get_options(option):
     pass
-
-class console:
-    class utils:
-        def cyan(text):
-          return colored(text, "cyan")
   
 class MyClient(discord.Client):
     async def on_ready(self):
         global developers
 
         print('_______________')
-        print('Info Type:', cyan("Runtime")
+        print('Info Type:', console.utils.cyan("Runtime")
         print('_______________')
-        print("Running with name:", cyan(self.user.name))
-        print("And therefore id:", cyan(self.user.id))
-        print('And further by extension:', cyan(os.environ['token']))
+        print("Running with name:", console.utils.cyan(self.user.name))
+        print("And therefore id:", console.utils.cyan(self.user.id))
+        print('And further by extension:', console.utils.cyan(os.environ['token']))
         print('_______________')
-        print('Info Type:', cyan("Status"))
+        print('Info Type:', console.utils.cyan("Status"))
         print('_______________')
-        print('Ready:', cyan("yes"))
-        print('Guilds:', ", ".join([cyan([guild for guild in client.guilds])))
+        print('Ready:', console.utils.cyan("yes"))
+        print('Guilds:', ", ".join([console.utils.cyan([guild for guild in client.guilds])))
         print('_______________')
         
         #print([[x for x in y.members] for y in client.guilds]))
