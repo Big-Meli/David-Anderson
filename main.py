@@ -12,7 +12,7 @@ Jess {
 }
 """
 
-import discord, time, random, asyncio, re, os
+import discord, time, random, asyncio, re, os, from termcolor import colored
 
 class webdiplomacy:
    hours_left = 24
@@ -38,15 +38,27 @@ def embed_field(title, *fields):
 def get_options(option):
     pass
 
+class console:
+    class utils:
+        def cyan(text):
+          return colored(text, "cyan")
+  
 class MyClient(discord.Client):
     async def on_ready(self):
         global developers
 
-        print('------')
-        print(self.user.name)
-        print(self.user.id)
-        print('good to go!')
-        print('------')
+        print('_______________')
+        print('Info Type:', cyan("Runtime")
+        print('_______________')
+        print("Running with name:", cyan(self.user.name))
+        print("And therefore id:", cyan(self.user.id))
+        print('And further by extension:', cyan(os.environ['token']))
+        print('_______________')
+        print('Info Type:', cyan("Status"))
+        print('_______________')
+        print('Ready:', cyan("yes"))
+        print('Guilds:', ", ".join([cyan([guild for guild in client.guilds])))
+        print('_______________')
         
         #print([[x for x in y.members] for y in client.guilds]))
         total = 0
@@ -157,7 +169,5 @@ class MyClient(discord.Client):
         else:
             print("Received Message")
       
-
-print(str(os.environ['token']))
 client = MyClient()
 client.run(str(os.environ['token']))
