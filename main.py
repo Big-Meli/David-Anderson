@@ -64,7 +64,7 @@ class MyClient(discord.Client):
         print('Info Type: Status')
         print('_______________')
         print('Ready: yes')
-        print('Guilds:', ", ".join([guild for guild in client.guilds]))
+        print('Guilds:', ", ".join([guild.name for guild in client.guilds]))
         print('_______________')
         
         #print([[x for x in y.members] for y in client.guilds]))
