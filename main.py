@@ -12,7 +12,7 @@ Jess {
 }
 """
 
-import discord, time, random, asyncio, re
+import discord, time, random, asyncio, re, os
 
 class webdiplomacy:
    hours_left = 24
@@ -160,4 +160,4 @@ class MyClient(discord.Client):
 
 
 client = MyClient()
-client.run(os.environ('token'))
+client.run(os.environ['token'])
